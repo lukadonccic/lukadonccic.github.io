@@ -6,6 +6,11 @@
 <title>Nikhil S</title>
 <meta name="description" content="Nikhil S — backend engineer in Bengaluru building Java and Spring Boot microservices.">
 <meta property="og:title" content="Nikhil S">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lukadonccic.github.io/">
+<meta name="theme-color" content="#07080F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238E6BFF'/%3E%3Cstop offset='1' stop-color='%234A3BD6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='700' text-anchor='middle' fill='white'%3ENS%3C/text%3E%3C/svg%3E">
+<link rel="canonical" href="https://lukadonccic.github.io/">
 <meta property="og:description" content="Java & Spring Boot microservices, REST APIs and batch pipelines for enterprise fintech.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,6 +53,11 @@ header.nav.scrolled { background: rgba(7,8,15,.78); backdrop-filter: blur(14px);
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
 .logo { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 18px; }
 .logo-mark { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-family: var(--mono); font-size: 14px; color: #fff; background: linear-gradient(135deg, var(--violet), #4A3BD6); box-shadow: 0 0 20px rgba(142,107,255,.45); }
+.menu-btn { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 42px; height: 42px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(18,20,42,.7); cursor: pointer; }
+.menu-btn span { display: block; height: 2px; border-radius: 2px; background: var(--fg); transition: transform .2s, opacity .2s; }
+.menu-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.menu-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 .nav-links { display: flex; gap: 28px; font-size: 15px; color: var(--muted); }
 .nav-links a { position: relative; transition: color .2s; }
 .nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; background: var(--cyan); transform: scaleX(0); transform-origin: left; transition: transform .25s; }
@@ -66,6 +76,7 @@ header.nav.scrolled { background: rgba(7,8,15,.78); backdrop-filter: blur(14px);
 .hello { font-family: var(--display); font-weight: 800; font-size: clamp(40px, 6.4vw, 72px); line-height: 1.02; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
 .hello .grad { background: linear-gradient(100deg, var(--violet), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .typed { font-size: clamp(19px, 2.3vw, 24px); color: #D6DAF0; margin: 18px 0 0; min-height: 2.5em; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .typed .word { color: var(--cyan); font-weight: 600; }
 .typed .caret { display: inline-block; width: 2px; height: 1.05em; background: var(--cyan); vertical-align: -3px; margin-left: 3px; animation: blink 1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
@@ -197,7 +208,12 @@ footer { position: relative; z-index: 1; padding-block: 70px 40px; overflow: hid
   #orbit { max-width: 220px; }
 }
 @media (max-width: 720px) {
-  .nav-links { display: none; }
+  .menu-btn { display: flex; }
+  .nav-links { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0; padding: 8px max(20px, env(safe-area-inset-left, 0px)) 16px; background: rgba(7,8,15,.96); border-bottom: 1px solid var(--line); display: none; }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 14px 0; font-size: 17px; border-bottom: 1px solid var(--line); }
+  .nav-links a::after { display: none; }
+  header.nav.menu-open { background: rgba(7,8,15,.96); }
   .hero { padding-block: 100px 90px; min-height: 0; }
   .rail-line { display: none; }
   .timeline::before { left: 22px; }
@@ -230,7 +246,8 @@ footer { position: relative; z-index: 1; padding-block: 70px 40px; overflow: hid
 <header class="nav" id="nav">
   <div class="container nav-inner">
     <a class="logo" href="#top" aria-label="Nikhil S, back to top"><span class="logo-mark">NS</span>Nikhil S</a>
-    <nav class="nav-links" aria-label="Sections">
+    <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="nav-links" aria-label="Sections">
       <a href="#about">About</a>
       <a href="#experience">Experience</a>
       <a href="#projects">Projects</a>
@@ -248,9 +265,10 @@ footer { position: relative; z-index: 1; padding-block: 70px 40px; overflow: hid
         <div>
           <div class="status"><span class="pulse"></span>Open to backend roles</div>
           <h1 class="hello">Hi, I'm <span class="grad">Nikhil</span></h1>
-          <p class="typed">I build <span class="word" id="typed"></span><span class="caret" aria-hidden="true"></span><span class="sr" style="position:absolute;left:-9999px">Java and Spring Boot microservices, REST APIs and batch pipelines.</span></p>
+          <p class="typed"><span aria-hidden="true">I build </span><span class="word" id="typed" aria-hidden="true"></span><span class="caret" aria-hidden="true"></span><span class="sr">I build Java and Spring Boot microservices, REST APIs and batch pipelines.</span></p>
           <div class="cta">
-            <a class="btn primary" href="#projects">View my work
+            <a class="btn primary" href="Nikhil_S_Resume.pdf" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>View Resume</a>
+            <a class="btn ghost" href="#projects">View my work
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <a class="btn ghost" href="https://github.com/lukadonccic" target="_blank" rel="noopener">GitHub</a>
           </div>
@@ -356,8 +374,8 @@ footer { position: relative; z-index: 1; padding-block: 70px 40px; overflow: hid
         <div class="chip float">PostgreSQL<small>database</small></div>
         <div class="chip float">Oracle<small>database</small></div>
         <div class="chip float">DB2<small>database</small></div>
-        <div class="chip float">Kafka<small>messaging</small></div>
-        <div class="chip float">RabbitMQ<small>messaging</small></div>
+        <div class="chip float">Kafka<small>familiar</small></div>
+        <div class="chip float">RabbitMQ<small>familiar</small></div>
         <div class="chip float">Jenkins<small>CI/CD</small></div>
         <div class="chip float">Git<small>VCS</small></div>
         <div class="chip float">ELK Stack<small>monitoring</small></div>
@@ -372,7 +390,7 @@ footer { position: relative; z-index: 1; padding-block: 70px 40px; overflow: hid
     <div class="container">
       <p class="eyebrow">My work</p>
       <h2 class="title">Projects<span class="dot">.</span></h2>
-      <p class="lead">A few things I've built outside my day job. Each one links to its code on GitHub.</p>
+      <p class="lead">A few things I've built outside my day job. Tap the GitHub button on a card to see its code.</p>
       <div class="projects">
         <article class="proj tilt" data-tilt="8">
           <div class="proj-visual"><canvas data-viz="api" aria-hidden="true"></canvas><span class="vlabel">POST /tasks → 201</span>
@@ -433,6 +451,7 @@ footer { position: relative; z-index: 1; padding-block: 70px 40px; overflow: hid
             <span class="email" id="email">nikhlotus@gmail.com</span>
             <button class="btn primary" id="copy" type="button">Copy email</button>
             <a class="btn ghost" href="mailto:nikhlotus@gmail.com">Write to me</a>
+            <a class="btn ghost" href="Nikhil_S_Resume.pdf" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>Resume</a>
           </div>
         </div>
         <canvas id="orbit" width="640" height="640" aria-hidden="true"></canvas>
@@ -467,6 +486,12 @@ footer { position: relative; z-index: 1; padding-block: 70px 40px; overflow: hid
     links.forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#' + cur); });
   }
   window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  /* mobile menu */
+  var mb = document.getElementById('menu-btn'), nl = document.getElementById('nav-links');
+  function setMenu(open) { mb.setAttribute('aria-expanded', open); mb.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); nl.classList.toggle('open', open); nav.classList.toggle('menu-open', open); }
+  mb.addEventListener('click', function () { setMenu(mb.getAttribute('aria-expanded') !== 'true'); });
+  links.forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
 
   /* cursor glow */
   var glow = document.getElementById('glow');
