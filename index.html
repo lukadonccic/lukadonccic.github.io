@@ -88,7 +88,7 @@ header.nav.scrolled { background: rgba(7,8,15,.78); backdrop-filter: blur(14px);
 .verb { background: var(--violet); color: #fff; padding: 2px 8px; border-radius: 5px; }
 .url { color: #C8CDE6; min-width: 0; overflow-wrap: anywhere; }
 .code200 { margin-left: auto; color: var(--ok); }
-.term pre { margin: 0; padding: 18px 20px 22px; font-family: var(--mono); font-size: 13px; line-height: 1.75; overflow-x: auto; color: #DCE0F5; min-height: 262px; }
+.term pre { margin: 0; padding: 18px 20px 22px; font-family: var(--mono); font-size: 13px; line-height: 1.75; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; color: #DCE0F5; min-height: 262px; }
 .k { color: #A995FF; } .s { color: #6FE8C8; } .n { color: #FFC27A; } .p { color: #5F6690; }
 
 .scroll-cue { position: absolute; left: 50%; bottom: 26px; z-index: 3; transform: translateX(-50%); width: 26px; height: 42px; border: 2px solid var(--muted); border-radius: 14px; }
@@ -686,12 +686,12 @@ footer { position: relative; z-index: 1; padding-block: 70px 40px; overflow: hid
           ctx.fillText(nodes[i].l, p[0], p[1]);
         });
       } else {
-        var rows = 6, rh = h / (rows + 1.5);
+        var rows = 5, rh = (h * .8) / rows;
         ctx.font = (11 * DPR) + 'px JetBrains Mono, monospace'; ctx.textBaseline = 'middle';
         var verbs = [['POST', '#4CD992', '/tasks', '201'], ['GET', '#8E6BFF', '/tasks/7', '200'], ['PUT', '#FFC27A', '/tasks/7', '200'], ['GET', '#8E6BFF', '/tasks', '200'], ['DELETE', '#FF8FB1', '/tasks/3', '204'], ['GET', '#8E6BFF', '/tasks/3', '404']];
         var off = Math.floor(t / 900) % verbs.length;
         for (var r = 0; r < rows; r++) {
-          var vb = verbs[(r + off) % verbs.length], y = rh * (r + 1.4);
+          var vb = verbs[(r + off) % verbs.length], y = h * .24 + rh * r;
           ctx.globalAlpha = r === rows - 1 ? (t % 900) / 900 : 1;
           ctx.fillStyle = vb[1]; ctx.textAlign = 'left'; ctx.fillText(vb[0], w * .07, y);
           ctx.fillStyle = '#C8CDE6'; ctx.fillText(vb[2], w * .3, y);
